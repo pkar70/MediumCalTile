@@ -1,0 +1,114 @@
+<tile>
+    <visual>
+
+        <binding template='TileMedium' branding="none" displayName="œroda">
+
+<group>
+<subgroup hint-weight="2">
+        <text hint-style='header' >29</text>
+      <text hint-style="SubtitleSubtle">Czw</text>
+   </subgroup>
+
+<subgroup hint-weight="5">
+
+      <text hint-style="body">IEEE p7010</text>
+      <text hint-style="captionSubtle">Tomorrow 22:00</text>
+
+      <text hint-style="body">Wyklad numer 1</text>
+      <text hint-style="captionSubtle">Sobota 11:00  (f1 232)</text>
+      <text hint-style="captionSubtle"> </text>
+
+        <text hint-style='subheader' hint-align="right">œroda, 29</text>
+
+      <text hint-style="body">Wyklad numer 2</text>
+      <text hint-style="captionSubtle">Sobota 13:00  (f1 232)</text>
+
+      <text hint-style="captionSubtle">œroda 6 wrzeœnia</text>
+      <text hint-style="captionSubtle">œroda 6 wrzeœnia</text>
+      <text hint-style="captionSubtle">œroda 6 wrzeœnia</text>
+
+   </subgroup>
+</group>
+
+        </binding>
+
+        <binding template='TileWide'>
+            <text hint-style='captionSubtle'>{subject}</text>
+            <text hint-style='captionSubtle'>{body}</text>
+            <text hint-style='subtitle' hint-align="right">Sep 6</text>
+        </binding>
+
+    </visual>
+</tile>
+
+
+
+
+Na cal¹ szerokosc, dni tygodnia w 'subheader':
+pon, wtorek, sroda, czw, pi¹tek, sobota, ndz
+
+Dwa wpisy:
+      <text hint-style="body">Wyklad numer 1</text>
+      <text hint-style="captionSubtle">Sobota 11:00  (f1 232)</text>
+      <text hint-style="captionSubtle"> </text>
+
+data:
+      <text hint-style='subheader' hint-align="right">ndz, 19</text>
+
+
+
+
+
+
+
+
+
+
+<tile>
+    <visual>
+
+        <binding template='TileMedium' branding="none" displayName="wrzesieñ">
+
+
+      <text hint-style="body">IEEE p7010</text>
+      <text hint-style="captionSubtle">Tomorrow 22:00</text>
+      <text hint-style="captionSubtle"> </text>
+
+      <text hint-style="body">Wyklad numer 1</text>
+      <text hint-style="captionSubtle">Sobota 11:00  (f1 232)</text>
+      <text hint-style="captionSubtle"> </text>
+
+        <text hint-style='subheader' hint-align="right">ndz, 19</text>
+
+        </binding>
+
+        <binding template='TileWide'>
+<group>
+<subgroup hint-weight="5">
+      <text hint-style="body">IEEE p7010</text>
+      <text hint-style="captionSubtle">Tomorrow 22:00</text>
+      <text hint-style="captionSubtle"> </text>
+
+      <text hint-style="body">Wyklad numer 1</text>
+      <text hint-style="captionSubtle">Sobota 11:00  (f1 232)</text>
+      <text hint-style="captionSubtle"> </text>
+
+      <text hint-style="body">Wyklad numer 2</text>
+      <text hint-style="captionSubtle">Sobota 13:00  (f1 232)</text>
+      <text hint-style="captionSubtle"> </text>
+
+   </subgroup>
+
+<subgroup hint-weight="1">
+            <text hint-style='title' hint-align="right"> </text>
+            <text hint-style='title' hint-align="right"> </text>
+            <text hint-style='title' hint-align="right">ndz</text>
+            <text hint-style='header' hint-align="right">19</text>
+   </subgroup>
+   </group>
+        </binding>
+
+    </visual>
+</tile>
+
+
