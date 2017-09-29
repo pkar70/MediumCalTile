@@ -138,8 +138,7 @@ Public NotInheritable Class MainPage
         UstawDefaulty()
         Await UstawTriggery()
 
-        If ApplicationData.Current.LocalSettings.Values("bCallFromTile").ToString = "1" Then
-            ' Await AppointmentManager.ShowTimeFrameAsync(Date.Now, TimeSpan.FromHours(24))
+        If App.GetSettingsBool("bCallFromTile") Then
             Await AppointmentManager.ShowTimeFrameAsync(Date.Now, TimeSpan.FromHours(24))
         Else
 
@@ -208,5 +207,7 @@ Public NotInheritable Class MainPage
 
     End Sub
 
-
+    Private Sub bOpenCal_Click(sender As Object, e As RoutedEventArgs)
+        AppointmentManager.ShowTimeFrameAsync(Date.Now, TimeSpan.FromHours(24))
+    End Sub
 End Class

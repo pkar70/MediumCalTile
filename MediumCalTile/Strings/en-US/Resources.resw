@@ -126,6 +126,9 @@
   <data name="resForcePL.Text" xml:space="preserve">
     <value>Force polish:</value>
   </data>
+  <data name="resOpenCal.Content" xml:space="preserve">
+    <value>Open calendar</value>
+  </data>
   <data name="resSettings.Text" xml:space="preserve">
     <value>Settings</value>
   </data>

@@ -33,6 +33,7 @@
             <TextBlock x:Uid="resForcePL" Grid.Row="4" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Text="Force polish:" />
             <ToggleSwitch x:Name="oForcePL" Grid.Row="4" HorizontalAlignment="Right" Margin="0,0,5,0" VerticalAlignment="Center" IsOn="True" MinWidth="0" Width="80" OffContent="" OnContent="" />
         </Grid>
-        <Button Grid.Row="3" x:Uid="resUpdateButt" Content="Update tile" HorizontalAlignment="Center" VerticalAlignment="Center" Click="bUpdate_Click"/>
+        <Button Grid.Row="3" x:Uid="resUpdateButt" Content="Update tile" HorizontalAlignment="Center" Margin="0,0,0,50" VerticalAlignment="Center" Click="bUpdate_Click"/>
+        <Button Grid.Row="3" x:Uid="resOpenCal" Content="Open calendar" HorizontalAlignment="Center" Margin="0,50,0,0" VerticalAlignment="Center" Click="bOpenCal_Click" />
     </Grid>
 </Page>

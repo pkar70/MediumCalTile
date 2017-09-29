@@ -24,39 +24,40 @@ NotInheritable Class App
     ''' <param name="e">Details about the launch request and process.</param>
     Protected Overrides Sub OnLaunched(e As Windows.ApplicationModel.Activation.LaunchActivatedEventArgs)
 
-        ApplicationData.Current.LocalSettings.Values("bCallFromTile") = 1
-        If e.TileActivatedInfo Is Nothing Then
-            ApplicationData.Current.LocalSettings.Values("bCallFromTile") = 0
-        End If
+        If Not e.TileActivatedInfo Is Nothing Then
+            SetSettingsBool("bCallFromTile", True)
+        Else
+            SetSettingsBool("bCallFromTile", False)
 
-        rootFrame = TryCast(Window.Current.Content, Frame)
+            rootFrame = TryCast(Window.Current.Content, Frame)
 
-        ' Do not repeat app initialization when the Window already has content,
-        ' just ensure that the window is active
+            ' Do not repeat app initialization when the Window already has content,
+            ' just ensure that the window is active
 
-        If rootFrame Is Nothing Then
-            ' Create a Frame to act as the navigation context and navigate to the first page
-            rootFrame = New Frame()
+            If rootFrame Is Nothing Then
+                ' Create a Frame to act as the navigation context and navigate to the first page
+                rootFrame = New Frame()
 
-            AddHandler rootFrame.NavigationFailed, AddressOf OnNavigationFailed
+                AddHandler rootFrame.NavigationFailed, AddressOf OnNavigationFailed
 
-            If e.PreviousExecutionState = ApplicationExecutionState.Terminated Then
-                ' TODO: Load state from previously suspended application
-            End If
-            ' Place the frame in the current Window
-            Window.Current.Content = rootFrame
-        End If
-
-        If e.PrelaunchActivated = False Then
-            If rootFrame.Content Is Nothing Then
-                ' When the navigation stack isn't restored navigate to the first page,
-                ' configuring the new page by passing required information as a navigation
-                ' parameter
-                rootFrame.Navigate(GetType(MainPage), e.Arguments)
+                If e.PreviousExecutionState = ApplicationExecutionState.Terminated Then
+                    ' TODO: Load state from previously suspended application
+                End If
+                ' Place the frame in the current Window
+                Window.Current.Content = rootFrame
             End If
 
-            ' Ensure the current window is active
-            Window.Current.Activate()
+            If e.PrelaunchActivated = False Then
+                If rootFrame.Content Is Nothing Then
+                    ' When the navigation stack isn't restored navigate to the first page,
+                    ' configuring the new page by passing required information as a navigation
+                    ' parameter
+                    rootFrame.Navigate(GetType(MainPage), e.Arguments)
+                End If
+
+                ' Ensure the current window is active
+                Window.Current.Activate()
+            End If
         End If
 
     End Sub
@@ -82,5 +83,26 @@ NotInheritable Class App
         ' TODO: Save application state and stop any background activity
         deferral.Complete()
     End Sub
+
+    Public Shared Sub SetSettingsBool(sName As String, sValue As Boolean, Optional bRoam As Boolean = False)
+        If bRoam Then ApplicationData.Current.RoamingSettings.Values(sName) = sValue.ToString
+        ApplicationData.Current.LocalSettings.Values(sName) = sValue.ToString
+    End Sub
+    Public Shared Function GetSettingsBool(sName As String, Optional iDefault As Boolean = False) As Boolean
+        Dim sTmp As Boolean
+
+        sTmp = iDefault
+
+        If ApplicationData.Current.RoamingSettings.Values.ContainsKey(sName) Then
+            sTmp = CBool(ApplicationData.Current.RoamingSettings.Values(sName).ToString)
+        End If
+        If ApplicationData.Current.LocalSettings.Values.ContainsKey(sName) Then
+            sTmp = CBool(ApplicationData.Current.LocalSettings.Values(sName).ToString)
+        End If
+
+        Return sTmp
+
+    End Function
+
 
 End Class
