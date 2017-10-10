@@ -26,6 +26,7 @@ NotInheritable Class App
 
         If Not e.TileActivatedInfo Is Nothing Then
             SetSettingsBool("bCallFromTile", True)
+            AppointmentManager.ShowTimeFrameAsync(Date.Now, TimeSpan.FromHours(24))
         Else
             SetSettingsBool("bCallFromTile", False)
 
@@ -103,6 +104,47 @@ NotInheritable Class App
         Return sTmp
 
     End Function
+
+    Public Shared Function GetSettingsInt(sName As String, Optional iDefault As Integer = 0) As Integer
+        Dim sTmp As Integer
+
+        sTmp = iDefault
+
+        If ApplicationData.Current.RoamingSettings.Values.ContainsKey(sName) Then
+            sTmp = CInt(ApplicationData.Current.RoamingSettings.Values(sName).ToString)
+        End If
+        If ApplicationData.Current.LocalSettings.Values.ContainsKey(sName) Then
+            sTmp = CInt(ApplicationData.Current.LocalSettings.Values(sName).ToString)
+        End If
+
+        Return sTmp
+
+    End Function
+
+    Public Shared Function GetSettingsString(sName As String, Optional sDefault As String = "") As String
+        Dim sTmp As String
+
+        sTmp = sDefault
+
+        If ApplicationData.Current.RoamingSettings.Values.ContainsKey(sName) Then
+            sTmp = ApplicationData.Current.RoamingSettings.Values(sName).ToString
+        End If
+        If ApplicationData.Current.LocalSettings.Values.ContainsKey(sName) Then
+            sTmp = ApplicationData.Current.LocalSettings.Values(sName).ToString
+        End If
+
+        Return sTmp
+
+    End Function
+    Public Shared Sub SetSettingsString(sName As String, sValue As String, Optional bRoam As Boolean = False)
+        If bRoam Then ApplicationData.Current.RoamingSettings.Values(sName) = sValue
+        ApplicationData.Current.LocalSettings.Values(sName) = sValue
+    End Sub
+
+    Public Shared Sub SetSettingsInt(sName As String, sValue As Integer, Optional bRoam As Boolean = False)
+        If bRoam Then ApplicationData.Current.RoamingSettings.Values(sName) = sValue.ToString
+        ApplicationData.Current.LocalSettings.Values(sName) = sValue.ToString
+    End Sub
 
 
 End Class

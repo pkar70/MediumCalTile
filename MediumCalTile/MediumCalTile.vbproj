@@ -17,7 +17,7 @@
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
     <PackageCertificateKeyFile>MediumCalTile_StoreKey.pfx</PackageCertificateKeyFile>
-    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>arm</AppxBundlePlatforms>
@@ -163,6 +163,37 @@
     <Content Include="Assets\StoreLogo.scale-400.png" />
     <Content Include="Assets\Wide310x150Logo.scale-100.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
+    <Content Include="Dni\01.png" />
+    <Content Include="Dni\02.png" />
+    <Content Include="Dni\03.png" />
+    <Content Include="Dni\04.png" />
+    <Content Include="Dni\05.png" />
+    <Content Include="Dni\06.png" />
+    <Content Include="Dni\07.png" />
+    <Content Include="Dni\08.png" />
+    <Content Include="Dni\09.png" />
+    <Content Include="Dni\10.png" />
+    <Content Include="Dni\11.png" />
+    <Content Include="Dni\12.png" />
+    <Content Include="Dni\13.png" />
+    <Content Include="Dni\14.png" />
+    <Content Include="Dni\15.png" />
+    <Content Include="Dni\16.png" />
+    <Content Include="Dni\17.png" />
+    <Content Include="Dni\18.png" />
+    <Content Include="Dni\19.png" />
+    <Content Include="Dni\20.png" />
+    <Content Include="Dni\21.png" />
+    <Content Include="Dni\22.png" />
+    <Content Include="Dni\23.png" />
+    <Content Include="Dni\24.png" />
+    <Content Include="Dni\25.png" />
+    <Content Include="Dni\26.png" />
+    <Content Include="Dni\27.png" />
+    <Content Include="Dni\28.png" />
+    <Content Include="Dni\29.png" />
+    <Content Include="Dni\30.png" />
+    <Content Include="Dni\31.png" />
     <Content Include="My Project\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -228,6 +259,7 @@
       <Name>BackgroundTasks</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

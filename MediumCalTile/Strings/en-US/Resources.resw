@@ -126,8 +126,14 @@
   <data name="resForcePL.Text" xml:space="preserve">
     <value>Force polish:</value>
   </data>
+  <data name="resNextEvent.Text" xml:space="preserve">
+    <value>Show short info about next:</value>
+  </data>
   <data name="resOpenCal.Content" xml:space="preserve">
     <value>Open calendar</value>
+  </data>
+  <data name="resPictDay.Text" xml:space="preserve">
+    <value>Month's day as picture:</value>
   </data>
   <data name="resSettings.Text" xml:space="preserve">
     <value>Settings</value>

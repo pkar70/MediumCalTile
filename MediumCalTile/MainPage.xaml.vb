@@ -110,27 +110,11 @@ Public NotInheritable Class MainPage
     Private Sub UstawDefaulty()
         ApplicationData.Current.LocalSettings.Values("sRunLog") = ""
 
-        ' reset zmiennych, jeśli ich nie ma ustawionych
-        If Not ApplicationData.Current.LocalSettings.Values.ContainsKey("bCallFromTile") Then
-            ApplicationData.Current.LocalSettings.Values("bCallFromTile") = "0"
-        End If
-        If Not ApplicationData.Current.LocalSettings.Values.ContainsKey("bForcePL") Then
-            ApplicationData.Current.LocalSettings.Values("bForcePL") = "1"
-        End If
-        If Not ApplicationData.Current.LocalSettings.Values.ContainsKey("iEventNo") Then
-            ApplicationData.Current.LocalSettings.Values("iEventNo") = "2"
-        End If
-        If Not ApplicationData.Current.LocalSettings.Values.ContainsKey("sFontSize") Then
-            ApplicationData.Current.LocalSettings.Values("sFontSize") = "subheader"
-        End If
-        If Not ApplicationData.Current.LocalSettings.Values.ContainsKey("iFontSize") Then
-            ApplicationData.Current.LocalSettings.Values("iFontSize") = "4"
-        End If
-
-        oForcePL.IsOn = CBool(ApplicationData.Current.LocalSettings.Values("bForcePL"))
-        oEventsNo.Value = CInt(ApplicationData.Current.LocalSettings.Values("iEventNo").ToString)
-        oFontSize.Value = CInt(ApplicationData.Current.LocalSettings.Values("iFontSize").ToString)
-
+        oForcePL.IsOn = App.GetSettingsBool("bForcePL", True)
+        oEventsNo.Value = App.GetSettingsInt("iEventNo", 2)
+        oFontSize.Value = App.GetSettingsInt("iFontSize", 3)
+        oNextEvent.IsOn = App.GetSettingsBool("bNextEvent", True)
+        oPictDay.IsOn = App.GetSettingsBool("bPictDay", True)
 
     End Sub
     Private Async Sub OnLoaded_Main(sender As Object, e As RoutedEventArgs)
@@ -148,7 +132,6 @@ Public NotInheritable Class MainPage
             ' wedle dokumentacji, Loaded event will always fire after OnNavigatedTo 
             ' ale na wszelki wypadek - bo najpierw jest to!
             If Not (oAppTrig Is Nothing) Then
-                ' Await oAppTrig.RequestAsync
                 Await oAppTrig.RequestAsync()
             End If
 
@@ -183,10 +166,12 @@ Public NotInheritable Class MainPage
     End Function
     Private Async Sub bUpdate_Click(sender As Object, e As RoutedEventArgs)
 
-        ApplicationData.Current.LocalSettings.Values("bForcePL") = oForcePL.IsOn
-        ApplicationData.Current.LocalSettings.Values("iEventNo") = oEventsNo.Value
-        ApplicationData.Current.LocalSettings.Values("sFontSize") = FontSizeNum2Txt(CInt(oFontSize.Value))
-        ApplicationData.Current.LocalSettings.Values("iFontSize") = CInt(oFontSize.Value)
+        App.SetSettingsBool("bForcePL", oForcePL.IsOn)
+        App.SetSettingsInt("iEventNo", CInt(oEventsNo.Value))
+        App.SetSettingsString("sFontSize", FontSizeNum2Txt(CInt(oFontSize.Value)))
+        App.SetSettingsInt("iFontSize", CInt(oFontSize.Value))
+        App.SetSettingsBool("bNextEvent", oNextEvent.IsOn)
+        App.SetSettingsBool("bPictDay", oPictDay.IsOn)
 
         ' *TODO* OnChange kazdego elementu sie ustawia dany element. Ale to pozniej. 
 

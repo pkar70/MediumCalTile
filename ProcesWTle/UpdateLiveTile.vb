@@ -12,7 +12,6 @@ Imports Windows.Storage
 Public NotInheritable Class UpdateLiveTile
     Implements IBackgroundTask
 
-
     Public Async Sub Run(taskInstance As IBackgroundTaskInstance) Implements IBackgroundTask.Run
 
         If taskInstance.Task.Name = "MediumCalTileServicing" Then
@@ -32,45 +31,19 @@ Public NotInheritable Class UpdateLiveTile
             'BackgroundExecutionManager.RemoveAccess()
 
             ' wklejone, a powinno byc: MainPage.UstawTriggery
-            ' error 0xC000027B chyba tu jest, linia z Register (pierwszego triggera)
-            'Dim oBAS As BackgroundAccessStatus
-
-            'Dim deferralDodawanie As BackgroundTaskDeferral = taskInstance.GetDeferral
-
-            'oBAS = Await BackgroundExecutionManager.RequestAccessAsync()
-
-            'If oBAS = BackgroundAccessStatus.AlwaysAllowed Or oBAS = BackgroundAccessStatus.AllowedSubjectToSystemPolicy Then
-            '    Dim builder As BackgroundTaskBuilder = New BackgroundTaskBuilder
-            '    Dim oRet As BackgroundTaskRegistration
-            '    builder.SetTrigger(New SystemTrigger(SystemTriggerType.UserPresent, False))
-            '    builder.Name = "MediumCalTileBackgroundUser"
-            '    builder.TaskEntryPoint = "BackgroundTasks.UpdateLiveTile"
-            '    oRet = builder.Register()
-            '    builder.SetTrigger(New SystemTrigger(SystemTriggerType.ServicingComplete, False))  ' user sie pojawia
-            '    builder.Name = "MediumCalTileServicing"
-            '    builder.TaskEntryPoint = "BackgroundTasks.UpdateLiveTile"
-            '    oRet = builder.Register()
-            '    builder.SetTrigger(New AppointmentStoreNotificationTrigger)
-            '    builder.Name = "MediumCalTileCalendarNotification"
-            '    builder.TaskEntryPoint = "BackgroundTasks.UpdateLiveTile"
-            '    oRet = builder.Register()
-            'End If
-
-            'deferralDodawanie.Complete()
-
             Exit Sub
         End If
 
-        'reset zmiennych - moze tester sklepowy wylatuje z errorem dlatego ze Exception w .ToString z NULLa
-        If Not ApplicationData.Current.LocalSettings.Values.ContainsKey("bForcePL") Then
-            ApplicationData.Current.LocalSettings.Values("bForcePL") = "1"
-        End If
-        If Not ApplicationData.Current.LocalSettings.Values.ContainsKey("iEventNo") Then
-            ApplicationData.Current.LocalSettings.Values("iEventNo") = "2"
-        End If
-        If Not ApplicationData.Current.LocalSettings.Values.ContainsKey("sFontSize") Then
-            ApplicationData.Current.LocalSettings.Values("sFontSize") = "subheader"
-        End If
+        ''reset zmiennych - moze tester sklepowy wylatuje z errorem dlatego ze Exception w .ToString z NULLa
+        'If Not ApplicationData.Current.LocalSettings.Values.ContainsKey("bForcePL") Then
+        '    ApplicationData.Current.LocalSettings.Values("bForcePL") = "1"
+        'End If
+        'If Not ApplicationData.Current.LocalSettings.Values.ContainsKey("iEventNo") Then
+        '    ApplicationData.Current.LocalSettings.Values("iEventNo") = "2"
+        'End If
+        'If Not ApplicationData.Current.LocalSettings.Values.ContainsKey("sFontSize") Then
+        '    ApplicationData.Current.LocalSettings.Values("sFontSize") = "subheader"
+        'End If
 
         'ApplicationData.Current.LocalSettings.Values("sRunLog") = Date.Now.ToString
 
@@ -87,7 +60,7 @@ Public NotInheritable Class UpdateLiveTile
         ' 8-9, dodatkowe msg
         ' 10-16, w dolnej linii
 
-        If CBool(Windows.Storage.ApplicationData.Current.LocalSettings.Values("bForcePL").ToString) Or
+        If GetSettingsBool("bForcePL", True) Or
             Globalization.CultureInfo.CurrentCulture.Name.Substring(0, 2) = "pl" Then
             Select Case iDay
                 Case 0
@@ -122,6 +95,8 @@ Public NotInheritable Class UpdateLiveTile
                     GetDTygName = "piątek"
                 Case 16
                     GetDTygName = "sobota"
+                Case 19
+                    GetDTygName = "… "
                 Case 20
                     GetDTygName = "n"
                 Case 21
@@ -131,7 +106,7 @@ Public NotInheritable Class UpdateLiveTile
                 Case 23
                     GetDTygName = "śr"
                 Case 24
-                    GetDTygName = "cz"
+                    GetDTygName = "czw"
                 Case 25
                     GetDTygName = "pt"
                 Case 26
@@ -180,6 +155,8 @@ Public NotInheritable Class UpdateLiveTile
                         GetDTygName = .DateTimeFormat.GetDayName(DayOfWeek.Friday)
                     Case 16
                         GetDTygName = "sat"
+                    Case 19
+                        GetDTygName = "… "
                     Case 20
                         GetDTygName = "sun"
                     Case 21
@@ -208,20 +185,25 @@ Public NotInheritable Class UpdateLiveTile
         If iMin = 0 Then sTmp = sTmp & "0"
         GodzMin2Txt = sTmp
     End Function
+
+    Private Function CreateOpisWhen(sWhen As Date, sToWhen As Date, iDni As Integer) As String
+        If sWhen.DayOfYear = Date.Now.DayOfYear Then
+            If sWhen <= Date.Now Then
+                Return GetDTygName(8) & " " & GodzMin2Txt(sToWhen.Hour, sToWhen.Minute)
+            Else
+                Return GodzMin2Txt(sWhen.Hour, sWhen.Minute)
+            End If
+        ElseIf sWhen.DayOfYear = Date.Now.DayOfYear + 1 Then
+            Return GetDTygName(9) & ", " & GodzMin2Txt(sWhen.Hour, sWhen.Minute)
+        Else
+            Return GetDTygName(sWhen.DayOfWeek + iDni) & ", " & GodzMin2Txt(sWhen.Hour, sWhen.Minute)
+        End If
+
+    End Function
     Private Function CreateEventDescr(sTitle As String, sWhen As Date, sToWhen As Date, sWhere As String) As String
         Dim sTmp As String
         If sWhere <> "" Then sWhere = "  (" & sWhere & ")"
-        If sWhen.DayOfYear = Date.Now.DayOfYear Then
-            If sWhen <= Date.Now Then
-                sTmp = GetDTygName(8) & " " & GodzMin2Txt(sToWhen.Hour, sToWhen.Minute) & sWhere
-            Else
-                sTmp = GodzMin2Txt(sWhen.Hour, sWhen.Minute) & sWhere
-            End If
-        ElseIf sWhen.DayOfYear = Date.Now.DayOfYear + 1 Then
-            sTmp = GetDTygName(9) & ", " & GodzMin2Txt(sWhen.Hour, sWhen.Minute) & sWhere
-        Else
-            sTmp = GetDTygName(sWhen.DayOfWeek) & ", " & GodzMin2Txt(sWhen.Hour, sWhen.Minute) & sWhere
-        End If
+        sTmp = CreateOpisWhen(sWhen, sToWhen, 0) & sWhere
 
         sTmp = "<text hint-style='body'>" & sTitle & "</text>" & vbCrLf &
                "<text hint-style='captionSubtle'>" & sTmp & "</text>" & vbCrLf
@@ -238,7 +220,11 @@ Public NotInheritable Class UpdateLiveTile
         ' subheader 34 light
         ' header    46 light
 
+    End Function
 
+    Private Function CreateEventHalfDescr(sTitle As String, sWhen As Date, sToWhen As Date, sWhere As String) As String
+        CreateEventHalfDescr = "<text hint-style='caption'>" &
+            GetDTygName(19) & CreateOpisWhen(sWhen, sToWhen, 20) & ":" & sTitle & "</text>" & vbCrLf
     End Function
     Private Async Function Calendar2TileAsync() As Task
 
@@ -249,16 +235,18 @@ Public NotInheritable Class UpdateLiveTile
         oCalendars = Await oStore.FindAppointmentsAsync(Date.Now, TimeSpan.FromDays(7))
         Dim oApp As Appointment
         Dim iCnt As Integer
-        Dim sEvents, sEvents1 As String
+        Dim sEvents, sEvents1, sEventsHalf As String
         sEvents = ""
         sEvents1 = ""
+        sEventsHalf = ""
 
-        iCnt = CInt(Windows.Storage.ApplicationData.Current.LocalSettings.Values("iEventNo").ToString)
+        iCnt = GetSettingsInt("iEventNo", 2)
 
         For Each oApp In oCalendars
             If iCnt < 0 Then Exit For
             If iCnt = 0 Then
                 sEvents1 = CreateEventDescr(oApp.Subject, oApp.StartTime.DateTime, oApp.StartTime.DateTime + oApp.Duration, oApp.Location)
+                sEventsHalf = CreateEventHalfDescr(oApp.Subject, oApp.StartTime.DateTime, oApp.StartTime.DateTime + oApp.Duration, oApp.Location)
             Else
                 ' If oApp.AllDay Then
                 sEvents = sEvents & CreateEventDescr(oApp.Subject, oApp.StartTime.DateTime, oApp.StartTime.DateTime + oApp.Duration, oApp.Location)
@@ -270,23 +258,33 @@ Public NotInheritable Class UpdateLiveTile
         sXml = "<tile><visual>"
 
         sXml = sXml & "<binding template ='TileMedium' branding='none'>"
-        sXml = sXml & sEvents & "<text hint-style='captionSubtle'></text>"
-        sXml = sXml & "<text hint-style='" &
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values("sFontSize").ToString &
-            "' hint-align='right'>"
+        sXml = sXml & sEvents
+        If GetSettingsBool("bNextEvent", True) Then sXml = sXml & sEventsHalf
 
-        ' "wtorek, 12" się nie miesci, więc scinam spacje - moze bedzie lepiej
-        ' "sobota, 16" takze sie nie miesci
-        If (Date.Now.DayOfWeek = DayOfWeek.Tuesday Or Date.Now.DayOfWeek = DayOfWeek.Saturday) And Date.Now.Day > 9 Then
-            sXml = sXml & GetDTygName(Date.Now.DayOfWeek + 10) & "," & Date.Now.Day & "</text>"
+        sXml = sXml & "<text hint-style='captionSubtle'></text>"
+
+        ' gdy jest obrazek, to  domyslna jest mniejsza czcionka oraz nie ma skrotow dni tygodnia
+        If GetSettingsBool("bPictDay", True) Then
+            sXml = sXml & "<text hint-style='" & GetSettingsString("sFontSize", "title") & "' hint-align='left'>"
+            sXml = sXml & GetDTygName(Date.Now.DayOfWeek) & "</text>"
+            sXml = sXml & "<image src='Dni\" & Date.Now.Day.ToString("d2") & ".png' placement='background'/>"
         Else
-            sXml = sXml & GetDTygName(Date.Now.DayOfWeek + 10) & ", " & Date.Now.Day & "</text>"
+            ' gdy nie ma obrazka w tle, to wieksza czcionka i ze skrotami
+            sXml = sXml & "<text hint-style='" & GetSettingsString("sFontSize", "subheader") & "' hint-align='right'>"
+            ' "wtorek, 12" się nie miesci, więc scinam spacje - moze bedzie lepiej
+            ' "sobota, 16" takze sie nie miesci
+            If (Date.Now.DayOfWeek = DayOfWeek.Tuesday Or Date.Now.DayOfWeek = DayOfWeek.Saturday) And Date.Now.Day > 9 Then
+                sXml = sXml & GetDTygName(Date.Now.DayOfWeek + 10) & "," & Date.Now.Day & "</text>"
+            Else
+                sXml = sXml & GetDTygName(Date.Now.DayOfWeek + 10) & ", " & Date.Now.Day & "</text>"
+            End If
         End If
         sXml = sXml & "</binding>"
 
         sXml = sXml & "<binding template ='TileWide' branding='none'>"
         sXml = sXml & "<group><subgroup hint-weight='5'>"
         sXml = sXml & sEvents & sEvents1
+        If GetSettingsBool("bNextEvent", True) Then sXml = sXml & sEventsHalf
         sXml = sXml & "</subgroup>"
         ' dla Wide:
         ' bylo" subtitle+title+header, 20+24+46, mozna ciut obnizyc
@@ -308,4 +306,55 @@ Public NotInheritable Class UpdateLiveTile
         TileUpdateManager.CreateTileUpdaterForApplication().Update(oTile)
 
     End Function
+
+    ' powtórka wszystkich funkcji, bo stąd nie widać App.!
+
+    Public Shared Function GetSettingsBool(sName As String, iDefault As Boolean) As Boolean
+        Dim sTmp As Boolean
+
+        sTmp = iDefault
+
+        If ApplicationData.Current.RoamingSettings.Values.ContainsKey(sName) Then
+            sTmp = CBool(ApplicationData.Current.RoamingSettings.Values(sName).ToString)
+        End If
+        If ApplicationData.Current.LocalSettings.Values.ContainsKey(sName) Then
+            sTmp = CBool(ApplicationData.Current.LocalSettings.Values(sName).ToString)
+        End If
+
+        Return sTmp
+
+    End Function
+
+    Public Shared Function GetSettingsInt(sName As String, iDefault As Integer) As Integer
+        Dim sTmp As Integer
+
+        sTmp = iDefault
+
+        If ApplicationData.Current.RoamingSettings.Values.ContainsKey(sName) Then
+            sTmp = CInt(ApplicationData.Current.RoamingSettings.Values(sName).ToString)
+        End If
+        If ApplicationData.Current.LocalSettings.Values.ContainsKey(sName) Then
+            sTmp = CInt(ApplicationData.Current.LocalSettings.Values(sName).ToString)
+        End If
+
+        Return sTmp
+
+    End Function
+
+    Public Shared Function GetSettingsString(sName As String, sDefault As String) As String
+        Dim sTmp As String
+
+        sTmp = sDefault
+
+        If ApplicationData.Current.RoamingSettings.Values.ContainsKey(sName) Then
+            sTmp = ApplicationData.Current.RoamingSettings.Values(sName).ToString
+        End If
+        If ApplicationData.Current.LocalSettings.Values.ContainsKey(sName) Then
+            sTmp = ApplicationData.Current.LocalSettings.Values(sName).ToString
+        End If
+
+        Return sTmp
+
+    End Function
+
 End Class
