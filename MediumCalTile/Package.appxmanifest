@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" IgnorableNamespaces="uap mp uap3">
-  <Identity Name="622PKar.MediumCalendarTile" Publisher="CN=B2AF14E8-43FD-463C-83BA-4CEC47122EA2" Version="1.2.12.0" />
+  <Identity Name="622PKar.MediumCalendarTile" Publisher="CN=B2AF14E8-43FD-463C-83BA-4CEC47122EA2" Version="2.0.11.0" />
   <mp:PhoneIdentity PhoneProductId="aa6e02b8-97b7-481c-9bbe-8123e4e1531d" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Medium Calendar Tile</DisplayName>

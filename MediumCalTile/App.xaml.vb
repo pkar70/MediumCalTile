@@ -26,38 +26,43 @@ NotInheritable Class App
 
         If Not e.TileActivatedInfo Is Nothing Then
             SetSettingsBool("bCallFromTile", True)
-            AppointmentManager.ShowTimeFrameAsync(Date.Now, TimeSpan.FromHours(24))
+            ' AppointmentManager.ShowTimeFrameAsync(Date.Now, TimeSpan.FromHours(24))
         Else
             SetSettingsBool("bCallFromTile", False)
+        End If
 
-            rootFrame = TryCast(Window.Current.Content, Frame)
+        rootFrame = TryCast(Window.Current.Content, Frame)
 
-            ' Do not repeat app initialization when the Window already has content,
-            ' just ensure that the window is active
+        ' Do not repeat app initialization when the Window already has content,
+        ' just ensure that the window is active
 
-            If rootFrame Is Nothing Then
-                ' Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = New Frame()
+        If rootFrame Is Nothing Then
+            ' Create a Frame to act as the navigation context and navigate to the first page
+            rootFrame = New Frame()
 
-                AddHandler rootFrame.NavigationFailed, AddressOf OnNavigationFailed
+            AddHandler rootFrame.NavigationFailed, AddressOf OnNavigationFailed
 
-                If e.PreviousExecutionState = ApplicationExecutionState.Terminated Then
-                    ' TODO: Load state from previously suspended application
-                End If
-                ' Place the frame in the current Window
-                Window.Current.Content = rootFrame
+            If e.PreviousExecutionState = ApplicationExecutionState.Terminated Then
+                ' TODO: Load state from previously suspended application
+            End If
+            ' Place the frame in the current Window
+            Window.Current.Content = rootFrame
+        End If
+
+        If e.PrelaunchActivated = False Then
+            If rootFrame.Content Is Nothing Then
+                ' When the navigation stack isn't restored navigate to the first page,
+                ' configuring the new page by passing required information as a navigation
+                ' parameter
+                rootFrame.Navigate(GetType(MainPage), e.Arguments)
             End If
 
-            If e.PrelaunchActivated = False Then
-                If rootFrame.Content Is Nothing Then
-                    ' When the navigation stack isn't restored navigate to the first page,
-                    ' configuring the new page by passing required information as a navigation
-                    ' parameter
-                    rootFrame.Navigate(GetType(MainPage), e.Arguments)
-                End If
-
-                ' Ensure the current window is active
+            ' Ensure the current window is active
+            ' ale tylko gdy nie jest z ikonki
+            If e.TileActivatedInfo Is Nothing Then
                 Window.Current.Activate()
+            Else
+                AppointmentManager.ShowTimeFrameAsync(Date.Now, TimeSpan.FromHours(24))
             End If
         End If
 

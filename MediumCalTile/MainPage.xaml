@@ -10,16 +10,18 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
         <Grid.RowDefinitions >
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="7*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="1" HorizontalAlignment="Center" Text="Medium calendar tile" VerticalAlignment="Top" />
-        <TextBlock Grid.Row="1" x:Name="tbModif" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="mod1" />
-        <Grid Grid.Row="2">
+        <TextBlock Grid.Row="1" Margin="10,10,10,10" HorizontalAlignment="Center" Text="Medium calendar tile" VerticalAlignment="Top" />
+        <TextBlock Grid.Row="2" x:Name="tbModif" Margin="10,10,10,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="mod1" />
+        <Grid Grid.Row="3">
             <Grid.RowDefinitions >
                 <RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -34,16 +36,19 @@
             <TextBlock x:Uid="resNextEvent" Grid.Row="3" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Text="Show short info about next:" />
             <ToggleSwitch x:Name="oNextEvent" Grid.Row="3" HorizontalAlignment="Right" Margin="0,0,5,0" VerticalAlignment="Center" IsOn="True" MinWidth="0" Width="80" OffContent="" OnContent="" />
 
-            <TextBlock x:Uid="resFontSize" Grid.Row="4" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Text="Size of bottom row:" />
-            <Slider x:Name="oFontSize" Grid.Row="4" Margin="0,0,10,0" HorizontalAlignment="Right" Width="100" Minimum="1" Maximum="5" LargeChange="1" Value="4"/>
+            <TextBlock x:Uid="resNextTitle" Grid.Row="4" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Text="... with title:" />
+            <ToggleSwitch x:Name="oNextTitle" Grid.Row="4" HorizontalAlignment="Right" Margin="0,0,5,0" VerticalAlignment="Center" IsOn="True" MinWidth="0" Width="80" OffContent="" OnContent="" />
 
-            <TextBlock x:Uid="resPictDay" Grid.Row="5" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Text="Month's day as picture:" />
-            <ToggleSwitch x:Name="oPictDay" Grid.Row="5" HorizontalAlignment="Right" Margin="0,0,5,0" VerticalAlignment="Center" IsOn="True" MinWidth="0" Width="80" OffContent="" OnContent="" />
+            <TextBlock x:Uid="resFontSize" Grid.Row="5" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Text="Size of bottom row:" />
+            <Slider x:Name="oFontSize" Grid.Row="5" Margin="0,0,10,0" HorizontalAlignment="Right" Width="100" Minimum="1" Maximum="5" LargeChange="1" Value="4"/>
 
-            <TextBlock x:Uid="resForcePL" Grid.Row="6" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Text="Force polish:" />
-            <ToggleSwitch x:Name="oForcePL" Grid.Row="6" HorizontalAlignment="Right" Margin="0,0,5,0" VerticalAlignment="Center" IsOn="True" MinWidth="0" Width="80" OffContent="" OnContent="" />
+            <TextBlock x:Uid="resPictDay" Grid.Row="6" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Text="Month's day as picture:" />
+            <ToggleSwitch x:Name="oPictDay" Grid.Row="6" HorizontalAlignment="Right" Margin="0,0,5,0" VerticalAlignment="Center" IsOn="True" MinWidth="0" Width="80" OffContent="" OnContent="" />
+
+            <TextBlock x:Uid="resForcePL" Grid.Row="7" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Text="Force polish:" />
+            <ToggleSwitch x:Name="oForcePL" Grid.Row="7" HorizontalAlignment="Right" Margin="0,0,5,0" VerticalAlignment="Center" IsOn="True" MinWidth="0" Width="80" OffContent="" OnContent="" />
         </Grid>
-        <Button Grid.Row="3" x:Uid="resUpdateButt" Content="Update tile" HorizontalAlignment="Center" Margin="0,0,0,50" VerticalAlignment="Center" Click="bUpdate_Click"/>
-        <Button Grid.Row="3" x:Uid="resOpenCal" Content="Open calendar" HorizontalAlignment="Center" Margin="0,50,0,0" VerticalAlignment="Center" Click="bOpenCal_Click" />
+        <Button Grid.Row="4" x:Uid="resUpdateButt" Content="Update tile" HorizontalAlignment="Center" Margin="0,0,0,50" VerticalAlignment="Center" Click="bUpdate_Click"/>
+        <Button Grid.Row="4" x:Uid="resOpenCal" Content="Open calendar" HorizontalAlignment="Center" Margin="0,50,0,0" VerticalAlignment="Center" Click="bOpenCal_Click" />
     </Grid>
 </Page>

@@ -12,40 +12,64 @@ Imports Windows.Storage
 Public NotInheritable Class UpdateLiveTile
     Implements IBackgroundTask
 
-    Public Async Sub Run(taskInstance As IBackgroundTaskInstance) Implements IBackgroundTask.Run
+    Public Async Sub ResetTriggers()
+        ' 20171023: do osobnej funkcji, bo sa w niej crash
 
-        If taskInstance.Task.Name = "MediumCalTileServicing" Then
-            For Each oTask In BackgroundTaskRegistration.AllTasks
+        For Each oTask In BackgroundTaskRegistration.AllTasks
 
-                ' kiedys uzywane - kasujemy na wszelki wypadek, jakby cos gdzies zostalo
-                If oTask.Value.Name = "MediumCalTileBackgroundTimer" Then oTask.Value.Unregister(True)
+            ' kiedys uzywane - kasujemy na wszelki wypadek, jakby cos gdzies zostalo
+            If oTask.Value.Name = "MediumCalTileBackgroundTimer" Then oTask.Value.Unregister(True)
 
-                ' aktualnie uzywane
-                If oTask.Value.Name = "MediumCalTileBackgroundUser" Then oTask.Value.Unregister(True)
-                If oTask.Value.Name = "MediumCalTileBackgroundApp" Then oTask.Value.Unregister(True)
-                If oTask.Value.Name = "MediumCalTileCalendarNotification" Then oTask.Value.Unregister(True)
+            ' aktualnie uzywane
+            If oTask.Value.Name = "MediumCalTileBackgroundUser" Then oTask.Value.Unregister(True)
+            ' tego nie ma jak przywrócic (zmienna globalna w App)
+            'If oTask.Value.Name = "MediumCalTileBackgroundApp" Then oTask.Value.Unregister(True)
+            If oTask.Value.Name = "MediumCalTileCalendarNotification" Then oTask.Value.Unregister(True)
 
-                ' a ten nie potrzeba - jest OneShot, i wlasnie sie zdarzyl :)
-                'If oTask.Value.Name = "MediumCalTileServicing" Then oTask.Value.Unregister(False)
-            Next
-            'BackgroundExecutionManager.RemoveAccess()
+            ' a ten nie potrzeba - jest OneShot, i wlasnie sie zdarzyl :)
+            ' 20171023: a wlasnie ze potrzeba, bo dalej istnieje?? Podczas debug wchodzi do unregister!
+            If oTask.Value.Name = "MediumCalTileServicing" Then oTask.Value.Unregister(False)
+        Next
+        'BackgroundExecutionManager.RemoveAccess()
 
-            ' wklejone, a powinno byc: MainPage.UstawTriggery
-            Exit Sub
+        ' wklejone, a powinno byc: MainPage.UstawTriggery
+        Dim oBAS As BackgroundAccessStatus
+        oBAS = Await BackgroundExecutionManager.RequestAccessAsync()
+
+        If oBAS = BackgroundAccessStatus.AlwaysAllowed Or oBAS = BackgroundAccessStatus.AllowedSubjectToSystemPolicy Then
+
+            Dim builder As BackgroundTaskBuilder = New BackgroundTaskBuilder
+            Dim oRet As BackgroundTaskRegistration
+
+            ' user sie pojawia - po to, zeby pokazac (obracaniem tile) ze coś sie dzieje
+            builder.SetTrigger(New SystemTrigger(SystemTriggerType.UserPresent, False))
+            builder.Name = "MediumCalTileBackgroundUser"
+            builder.TaskEntryPoint = "BackgroundTasks.UpdateLiveTile"
+            oRet = builder.Register()
+
+            ' ten jest na pewno usuniety...
+            ' 20171023: wylaczenie oTrig i warunek, ale crash raczej zwiazany z tym ze nie bylo unregister?
+            Dim oTrig = New SystemTrigger(SystemTriggerType.ServicingComplete, True)
+            If oTrig IsNot Nothing Then
+                builder.SetTrigger(oTrig)
+                builder.Name = "MediumCalTileServicing"
+                builder.TaskEntryPoint = "BackgroundTasks.UpdateLiveTile"
+                oRet = builder.Register()
+            End If
+
+            ' ten jest na pewno usuniety
+            builder.SetTrigger(New AppointmentStoreNotificationTrigger) ' <-- crash?
+            builder.Name = "MediumCalTileCalendarNotification"
+            builder.TaskEntryPoint = "BackgroundTasks.UpdateLiveTile"
+            oRet = builder.Register()
         End If
 
-        ''reset zmiennych - moze tester sklepowy wylatuje z errorem dlatego ze Exception w .ToString z NULLa
-        'If Not ApplicationData.Current.LocalSettings.Values.ContainsKey("bForcePL") Then
-        '    ApplicationData.Current.LocalSettings.Values("bForcePL") = "1"
-        'End If
-        'If Not ApplicationData.Current.LocalSettings.Values.ContainsKey("iEventNo") Then
-        '    ApplicationData.Current.LocalSettings.Values("iEventNo") = "2"
-        'End If
-        'If Not ApplicationData.Current.LocalSettings.Values.ContainsKey("sFontSize") Then
-        '    ApplicationData.Current.LocalSettings.Values("sFontSize") = "subheader"
-        'End If
+    End Sub
 
-        'ApplicationData.Current.LocalSettings.Values("sRunLog") = Date.Now.ToString
+    Public Async Sub Run(taskInstance As IBackgroundTaskInstance) Implements IBackgroundTask.Run
+        If taskInstance.Task.Name = "MediumCalTileServicing" Then
+            ' Await ResetTriggers
+        End If
 
         Dim deferral As BackgroundTaskDeferral = taskInstance.GetDeferral
         Await Calendar2TileAsync()
@@ -186,6 +210,15 @@ Public NotInheritable Class UpdateLiveTile
         GodzMin2Txt = sTmp
     End Function
 
+    Private Shared Function SafeString(sTxt As String) As String
+        Dim sTmp = sTxt
+        sTmp = sTmp.Replace("&", "&amp;")   ' to musi byc pierwsze!
+        ' dopiero teraz pozostale
+        sTmp = sTmp.Replace("<", "&gt;")
+        sTmp = sTmp.Replace(">", "&lt;")
+        Return sTmp
+    End Function
+
     Private Function CreateOpisWhen(sWhen As Date, sToWhen As Date, iDni As Integer) As String
         If sWhen.DayOfYear = Date.Now.DayOfYear Then
             If sWhen <= Date.Now Then
@@ -202,10 +235,11 @@ Public NotInheritable Class UpdateLiveTile
     End Function
     Private Function CreateEventDescr(sTitle As String, sWhen As Date, sToWhen As Date, sWhere As String) As String
         Dim sTmp As String
-        If sWhere <> "" Then sWhere = "  (" & sWhere & ")"
+        If sWhere <> "" Then sWhere = SafeString("  (" & sWhere & ")")
+
         sTmp = CreateOpisWhen(sWhen, sToWhen, 0) & sWhere
 
-        sTmp = "<text hint-style='body'>" & sTitle & "</text>" & vbCrLf &
+        sTmp = "<text hint-style='body'>" & SafeString(sTitle) & "</text>" & vbCrLf &
                "<text hint-style='captionSubtle'>" & sTmp & "</text>" & vbCrLf
         '        "<text hint-style='captionSubtle'></text>"
 
@@ -223,8 +257,11 @@ Public NotInheritable Class UpdateLiveTile
     End Function
 
     Private Function CreateEventHalfDescr(sTitle As String, sWhen As Date, sToWhen As Date, sWhere As String) As String
-        CreateEventHalfDescr = "<text hint-style='caption'>" &
-            GetDTygName(19) & CreateOpisWhen(sWhen, sToWhen, 20) & ":" & sTitle & "</text>" & vbCrLf
+        Dim sTmp As String
+        sTmp = "<text hint-style='caption'>" & GetDTygName(19) & CreateOpisWhen(sWhen, sToWhen, 20)
+        If GetSettingsBool("bNextTitle", False) Then sTmp = sTmp & ": " & SafeString(sTitle)
+        sTmp = sTmp & "</text>" & vbCrLf
+        CreateEventHalfDescr = sTmp
     End Function
     Private Async Function Calendar2TileAsync() As Task
 

@@ -24,45 +24,34 @@ Public NotInheritable Class MainPage
 
     Shared oAppTrig As ApplicationTrigger
 
-    Public Shared Function TriggersUsun(Optional bAll As Boolean = False) As Integer
+    Public Shared Sub TriggersUsun()
         ' zwraca b0..b3 stan triggerów PO uruchomieiu funkcji
         ' gdy nie zostal zaden trigger, robi RemoveAccess (dla ServicingComplete)
-        Dim iRet As Integer = 0
 
         For Each oTask In BackgroundTaskRegistration.AllTasks
             ' uzywane w historii (do wersji z 21 IX 2017)
             If oTask.Value.Name = "MediumCalTileBackgroundTimer" Then oTask.Value.Unregister(True)
 
-            If oTask.Value.Name = "MediumCalTileBackgroundUser" Then
-                If bAll Then
-                    oTask.Value.Unregister(True)
-                Else
-                    iRet = iRet Or 2
-                End If
-            End If
-            If oTask.Value.Name = "MediumCalTileBackgroundApp" Then
-                ' jesli jest, to i tak zrob na nowo - jest potrzebna zmienna oAppTrig
-                oTask.Value.Unregister(True)
-            End If
-
+            ' aktualne
+            If oTask.Value.Name = "MediumCalTileBackgroundUser" Then oTask.Value.Unregister(True)
             If oTask.Value.Name = "MediumCalTileServicing" Then oTask.Value.Unregister(True)
             If oTask.Value.Name = "MediumCalTileCalendarNotification" Then oTask.Value.Unregister(True)
+            If oTask.Value.Name = "MediumCalTileBackgroundApp" Then oTask.Value.Unregister(True)
 
         Next
 
-        If iRet = 0 Then BackgroundExecutionManager.RemoveAccess()
+        BackgroundExecutionManager.RemoveAccess()
 
-        TriggersUsun = iRet
-    End Function
+    End Sub
 
-    Public Shared Async Function UstawTriggery(Optional bAll As Boolean = False) As Task
+    Public Shared Async Function UstawTriggery() As Task
 
         Dim oBAS As BackgroundAccessStatus
         oBAS = Await BackgroundExecutionManager.RequestAccessAsync()
 
         If oBAS = BackgroundAccessStatus.AlwaysAllowed Or oBAS = BackgroundAccessStatus.AllowedSubjectToSystemPolicy Then
 
-            Dim iTriggers = TriggersUsun(bAll)
+            TriggersUsun()
 
             ' https://docs.microsoft.com/en-us/windows/uwp/launch-resume/create-And-register-an-inproc-background-task
             Dim builder As BackgroundTaskBuilder = New BackgroundTaskBuilder
@@ -77,28 +66,23 @@ Public NotInheritable Class MainPage
             'End If
 
             ' user sie pojawia - po to, zeby pokazac (obracaniem tile) ze coś sie dzieje
-            If Not CBool(iTriggers And 2) Then
-                builder.SetTrigger(New SystemTrigger(SystemTriggerType.UserPresent, False))
-                builder.Name = "MediumCalTileBackgroundUser"
-                builder.TaskEntryPoint = "BackgroundTasks.UpdateLiveTile"
-                oRet = builder.Register()
+            builder.SetTrigger(New SystemTrigger(SystemTriggerType.UserPresent, False))
+            builder.Name = "MediumCalTileBackgroundUser"
+            builder.TaskEntryPoint = "BackgroundTasks.UpdateLiveTile"
+            oRet = builder.Register()
 
-            End If
-
-            ' ten jest na pewno usuniety w TriggersUsun, odtworzenie oAppTrig
+            ' odtworzenie oAppTrig
             oAppTrig = New ApplicationTrigger
             builder.SetTrigger(oAppTrig)  ' do wywolywania metody
             builder.Name = "MediumCalTileBackgroundApp"
             builder.TaskEntryPoint = "BackgroundTasks.UpdateLiveTile"
             oRet = builder.Register()
 
-            ' ten jest na pewno usuniety
-            builder.SetTrigger(New SystemTrigger(SystemTriggerType.ServicingComplete, True))  ' user sie pojawia
+            builder.SetTrigger(New SystemTrigger(SystemTriggerType.ServicingComplete, True))
             builder.Name = "MediumCalTileServicing"
             builder.TaskEntryPoint = "BackgroundTasks.UpdateLiveTile"
             oRet = builder.Register()
 
-            ' ten jest na pewno usuniety
             builder.SetTrigger(New AppointmentStoreNotificationTrigger)
             builder.Name = "MediumCalTileCalendarNotification"
             builder.TaskEntryPoint = "BackgroundTasks.UpdateLiveTile"
@@ -115,7 +99,7 @@ Public NotInheritable Class MainPage
         oFontSize.Value = App.GetSettingsInt("iFontSize", 3)
         oNextEvent.IsOn = App.GetSettingsBool("bNextEvent", True)
         oPictDay.IsOn = App.GetSettingsBool("bPictDay", True)
-
+        oNextTitle.IsOn = App.GetSettingsBool("bNextTitle", False)
     End Sub
     Private Async Sub OnLoaded_Main(sender As Object, e As RoutedEventArgs)
 
@@ -172,6 +156,7 @@ Public NotInheritable Class MainPage
         App.SetSettingsInt("iFontSize", CInt(oFontSize.Value))
         App.SetSettingsBool("bNextEvent", oNextEvent.IsOn)
         App.SetSettingsBool("bPictDay", oPictDay.IsOn)
+        App.SetSettingsBool("bNextTitle", oNextTitle.IsOn)
 
         ' *TODO* OnChange kazdego elementu sie ustawia dany element. Ale to pozniej. 
 
@@ -194,5 +179,13 @@ Public NotInheritable Class MainPage
 
     Private Sub bOpenCal_Click(sender As Object, e As RoutedEventArgs)
         AppointmentManager.ShowTimeFrameAsync(Date.Now, TimeSpan.FromHours(24))
+    End Sub
+
+    Private Sub uiNextDay_Toggled(sender As Object, e As RoutedEventArgs) Handles oNextEvent.Toggled
+        Try
+            oNextTitle.IsEnabled = oNextEvent.IsOn
+        Catch ex As Exception
+            ' spodziewane - ktoregos moze jeszcze nie być
+        End Try
     End Sub
 End Class

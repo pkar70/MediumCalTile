@@ -129,6 +129,9 @@
   <data name="resNextEvent.Text" xml:space="preserve">
     <value>Show short info about next:</value>
   </data>
+  <data name="resNextTitle.Text" xml:space="preserve">
+    <value>... with title</value>
+  </data>
   <data name="resOpenCal.Content" xml:space="preserve">
     <value>Open calendar</value>
   </data>
