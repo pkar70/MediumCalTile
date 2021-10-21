@@ -260,3 +260,13 @@ paket-files/
 __pycache__/
 *.pyc
 /Moje
+
+
+#moje
+**/Moje/
+Moje/
+descript.ion
+*.apk
+/Moje/
+pswd.vb
+pswd.cs

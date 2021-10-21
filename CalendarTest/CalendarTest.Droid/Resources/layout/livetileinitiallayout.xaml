@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/livetile_initial_layout"
+        android:orientation="vertical" >
+        <TextView android:text="initial layout" android:id="@+id/livetile_init_text0"  android:singleLine="true" android:layout_width="match_parent" android:layout_height="40dp"  />
+    </LinearLayout>
+</FrameLayout>

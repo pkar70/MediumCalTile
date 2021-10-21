@@ -1,0 +1,69 @@
+﻿<Page
+    x:Class="MediumCalTile.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MediumCalTile"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" Loaded="Page_Loaded">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
+        <Grid.RowDefinitions >
+            <RowDefinition Height="1*"/>
+            <!-- spacer -->
+            <RowDefinition Height="Auto"/>
+            <!-- app name -->
+            <RowDefinition Height="Auto"/>
+            <!-- app version -->
+            <RowDefinition Height="Auto"/>
+            <!-- 'settings' -->
+            <RowDefinition Height="Auto"/>
+            <!-- internal grid -->
+            <RowDefinition Height="Auto"/>
+            <!-- button update -->
+            <RowDefinition Height="Auto"/>
+            <!-- button show calendar -->
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="1" Margin="0,10,0,10" HorizontalAlignment="Center" Text="Medium calendar tile" VerticalAlignment="Top" FontSize="20" />
+        <TextBlock Grid.Row="2" x:Name="tbModif" Margin="0,0,0,5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="mod1" />
+        <TextBlock x:Uid="resSettings" Grid.Row="3" HorizontalAlignment="Center" Text="Settings" FontSize="16" Margin="0,5,0,0" Name="uiSettingsTitle"/>
+        <Grid Grid.Row="4" Margin="10,10,10,10">
+            <Grid.RowDefinitions >
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock x:Uid="resEventNo" Grid.Row="0" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Text="Number of rows (events):" />
+            <Slider x:Name="oEventsNo" Grid.Row="0" Margin="0,0,10,0" HorizontalAlignment="Right" Width="100" Minimum="1" Maximum="4" LargeChange="1" Value="2"/>
+
+            <TextBlock x:Uid="resNextEvent" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Text="Show short info about next:" />
+            <ToggleSwitch x:Name="oNextEvent" Grid.Row="1" HorizontalAlignment="Right" Margin="0,0,5,0" VerticalAlignment="Center" IsOn="True" MinWidth="0" Width="80" OffContent="" OnContent="" Toggled="uiNextDay_Toggled"/>
+
+            <TextBlock x:Uid="resNextTitle" Grid.Row="2" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Text="... with title:" />
+            <ToggleSwitch x:Name="oNextTitle" Grid.Row="2" HorizontalAlignment="Right" Margin="0,0,5,0" VerticalAlignment="Center" IsOn="True" MinWidth="0" Width="80" OffContent="" OnContent="" />
+
+            <TextBlock x:Uid="resFontSize" Grid.Row="3" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Text="Size of bottom row:" />
+            <Slider x:Name="oFontSize" Grid.Row="3" Margin="0,0,10,0" HorizontalAlignment="Right" Width="100" Minimum="1" Maximum="5" LargeChange="1" Value="4"/>
+
+            <TextBlock x:Uid="resPictDay" Grid.Row="4" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Text="Month's day as picture:" />
+            <ToggleSwitch x:Name="oPictDay" Grid.Row="4" HorizontalAlignment="Right" Margin="0,0,5,0" VerticalAlignment="Center" IsOn="True" MinWidth="0" Width="80" OffContent="" OnContent="" />
+
+            <TextBlock x:Uid="uiDelDupl" Grid.Row="5" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Text="Bez powtórek:" />
+            <ToggleSwitch x:Name="uiDelDupl" Grid.Row="5" HorizontalAlignment="Right" Margin="0,0,5,0" VerticalAlignment="Center" IsOn="True" MinWidth="0" Width="80" OffContent="" OnContent="" />
+
+            <TextBlock x:Uid="resForcePL" Grid.Row="6" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Text="Force polish:" />
+            <ToggleSwitch x:Name="oForcePL" Grid.Row="6" HorizontalAlignment="Right" Margin="0,0,5,0" VerticalAlignment="Center" IsOn="True" MinWidth="0" Width="80" OffContent="" OnContent="" />
+
+            <!--<TextBlock Name="uiConvertHtmlText" Grid.Row="7" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Text="Google workaround:" Visibility="Collapsed" />
+            <ToggleSwitch Name="uiConvertHtmlToggle" Grid.Row="7" HorizontalAlignment="Right" Margin="0,0,5,0" VerticalAlignment="Center" IsOn="True" MinWidth="0" Width="80" OffContent="" OnContent="" Visibility="Collapsed" /> -->
+        </Grid>
+        <Button Grid.Row="5" x:Uid="resUpdateButt" Content="Update tile" HorizontalAlignment="Center" Margin="0,0,0,10" VerticalAlignment="Center" Click="bUpdate_Click"/>
+        <Button Grid.Row="6" x:Uid="resOpenCal" Content="Open calendar" HorizontalAlignment="Center" Margin="0,10,0,5" VerticalAlignment="Center" Click="bOpenCal_Click" />
+    </Grid>
+</Page>
