@@ -6,7 +6,7 @@
 
 
 # Privacy policy
- http://beskid.geo.uj.edu.pl/p/ms/medcaltile-privacy.htm
+ https://github.com/pkar70/MediumCalTile/wiki/Privacy-policy
 
  For history (in Polish), see MainPage.xaml.vb file.
  This is my third UWP app, created in 2017.
